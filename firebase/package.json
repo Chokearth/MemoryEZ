@@ -1,0 +1,21 @@
+{
+  "name": "firebase",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --env=node --forceExit --runInBand",
+    "emulator:test": "firebase emulators:start -c firebase.local.json --only firestore",
+    "emulator:local": "firebase emulators:start -c firebase.local.json --export-on-exit ./emulator --import ./emulator/",
+    "emulator:cptf": "firebase emulators:start -c firebase.cptf.json --export-on-exit ./emulator --import ./emulator/",
+    "emulator:phone": "firebase emulators:start -c firebase.phone.json --export-on-exit ./emulator --import ./emulator/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^2.0.7",
+    "firebase": "^9.17.1",
+    "jest": "^29.4.2"
+  }
+}

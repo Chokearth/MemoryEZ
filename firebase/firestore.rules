@@ -1,0 +1,31 @@
+service cloud.firestore {
+    match /databases/{database}/documents {
+        function isSignedIn() {
+            return request.auth != null;
+        }
+        function isOwnerOfTheme() {
+            return request.auth.uid == resource.data.ownerId;
+        }
+        function themeLockVariable() {
+            return !request.resource.data.diff(resource.data).affectedKeys().hasAny(['ownerId']);
+        }
+
+        match /themes/{themeId} {
+            allow read: if isSignedIn() && (resource.data.public == true || isOwnerOfTheme());
+            allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+            allow update: if isSignedIn() && isOwnerOfTheme() && themeLockVariable()
+            allow delete: if isSignedIn() && isOwnerOfTheme();
+
+
+
+            function isOwnerOfMotherTheme() {
+                return isSignedIn() && request.auth.uid == get(/databases/$(database)/documents/themes/$(themeId)).data.ownerId;
+            }
+
+            match /cards/{cardId} {
+                allow read: if isSignedIn() && (get(/databases/$(database)/documents/themes/$(themeId)).data.public == true || isOwnerOfMotherTheme());
+                allow write: if isOwnerOfMotherTheme();
+            }
+        }
+    }
+}
