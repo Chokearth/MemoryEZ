@@ -37,6 +37,13 @@
             {
               "client_id": "507321546238-k2o7qfhdkcc979d4vc02so3vud0f8n10.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "507321546238-ef9hm7jmmdn6hcpb71kit0mao5djrs9u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "fr.chokearth.memoryEz"
+              }
             }
           ]
         }
