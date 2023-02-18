@@ -251,6 +251,9 @@ class _BasicContentState extends State<BasicContent>
         });
       },
       onPanUpdate: (details) {
+        if (widget.animPos != 0) {
+          return;
+        }
         setState(() {
           widget.x = details.globalPosition.dx - widget.xStart;
           widget.y = details.globalPosition.dy - widget.yStart;
