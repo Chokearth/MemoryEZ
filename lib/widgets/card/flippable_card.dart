@@ -9,12 +9,14 @@ class FlippableCard extends StatelessWidget {
   final Color borderColor;
   final bool isFront;
   final VoidCallback? onTap;
+  final Duration duration;
 
   const FlippableCard({
     Key? key,
     required this.front,
     required this.back,
     required this.isFront,
+    this.duration = const Duration(milliseconds: 400),
     this.borderColor = Colors.white,
     this.onTap,
   }) : super(key: key);
@@ -22,7 +24,7 @@ class FlippableCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 400),
+      duration: duration,
       transitionBuilder: _transitionBuilder,
       layoutBuilder: (widget, list) => Stack(
         children: [widget!, ...list],

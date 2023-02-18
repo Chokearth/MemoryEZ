@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:memory_ez/pages/theme/_learn/basic/_end.dart';
 import 'package:memory_ez/pages/theme/_learn/basic/_round_end.dart';
+import 'package:memory_ez/widgets/card/card_face.dart';
+import 'package:memory_ez/widgets/card/flippable_card.dart';
 
 import '../../../../models/theme.dart';
 
@@ -125,6 +127,7 @@ class BasicContent extends StatefulWidget {
   }
 
   void animNext(bool isCorrect) {
+    front = true;
     if (isCorrect) {
       animPos = 1;
     } else {
@@ -244,6 +247,11 @@ class _BasicContentState extends State<BasicContent>
     double yPos2 = centerY - size / 2 - (widget.animPos == 0 ? 50 : 0);
 
     return GestureDetector(
+      onTap: () {
+        setState(() {
+          widget.front = !widget.front;
+        });
+      },
       onPanStart: (details) {
         setState(() {
           widget.xStart = details.globalPosition.dx;
@@ -294,7 +302,11 @@ class _BasicContentState extends State<BasicContent>
                   duration:
                       Duration(milliseconds: widget.animPos == 0 ? 0 : 600),
                   curve: Curves.linear,
-                  opacity: widget.hasNextCard ? widget.animPos == 0 ? 0.1 : 1 : 0,
+                  opacity: widget.hasNextCard
+                      ? widget.animPos == 0
+                          ? 0.1
+                          : 1
+                      : 0,
                   child: _buildCardContainer(context, widget.nextCard, true),
                 ),
               ),
@@ -323,26 +335,11 @@ class _BasicContentState extends State<BasicContent>
 
   Widget _buildCardContainer(
       BuildContext context, Flashcard card, bool forceFront) {
-    return Center(
-      child: Card(
-        color: Theme.of(context).backgroundColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(
-            color: widget.theme.color,
-            width: 2,
-          ),
-        ),
-        child: Center(
-          child: Text(
-            widget.front || forceFront ? card.front : card.back,
-            style: const TextStyle(
-              fontSize: 20,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
+    return FlippableCard(
+      isFront: widget.front || forceFront || widget.animPos != 0,
+      front: CardFaceContentParameters(text: card.front),
+      back: CardFaceContentParameters(text: card.back),
+      borderColor: widget.theme.color,
     );
   }
 }
