@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:memory_ez/models/theme.dart';
 import 'package:memory_ez/pages/theme/_learn/basic/basic.dart';
