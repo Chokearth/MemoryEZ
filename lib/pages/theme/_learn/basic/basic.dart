@@ -1,19 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:memory_ez/pages/theme/_learn/basic/_end.dart';
-import 'package:memory_ez/pages/theme/_learn/basic/_round_end.dart';
 import 'package:memory_ez/widgets/card/card_face.dart';
 import 'package:memory_ez/widgets/card/flippable_card.dart';
 
 import '../../../../models/theme.dart';
-
-class FlashcardLearn {
-  final Flashcard card;
-  bool validated = false;
-
-  FlashcardLearn(this.card);
-}
+import '../_learn_base.dart';
 
 class Basic extends StatelessWidget {
   final FlashTheme theme;
@@ -26,36 +18,18 @@ class Basic extends StatelessWidget {
       appBar: AppBar(
         title: Text(theme.name),
       ),
-      body: FutureBuilder(
-        future: theme.getFlashcards(),
-        builder:
-            (BuildContext context, AsyncSnapshot<List<Flashcard>> snapshot) {
-          if (snapshot.hasError) {
-            return const Text("Something went wrong");
-          }
-
-          if (snapshot.hasData && snapshot.data!.isEmpty) {
-            return const Text("Document is empty");
-          }
-
-          if (snapshot.hasData == true) {
-            return BasicContent(theme: theme, cards: snapshot.data!);
-          }
-
-          return const Text("loading...");
-        },
+      body: LoadCards(
+        theme: theme,
+        builder: (context, theme, cards) => BasicContent(
+          learn: LearnSystem(theme: theme, cards: cards),
+        ),
       ),
     );
   }
 }
 
 class BasicContent extends StatefulWidget {
-  final FlashTheme theme;
-  final List<Flashcard> cards;
-  late List<FlashcardLearn> cardsLearn;
-  int index = 0;
-  bool roundEnd = false;
-  int prevRoundScore = 0;
+  final LearnSystem learn;
   bool front = true;
 
   double animPos = 0;
@@ -64,66 +38,15 @@ class BasicContent extends StatefulWidget {
   double x = 0;
   double y = 0;
 
-  BasicContent({Key? key, required this.theme, required this.cards})
-      : super(key: key) {
-    cardsLearn = cards.map((e) => FlashcardLearn(e)).toList()..shuffle();
-  }
+  BasicContent({Key? key, required this.learn}) : super(key: key) {}
 
   @override
   _BasicContentState createState() => _BasicContentState();
 
-  get card => cardsLearn[index].card;
-
-  get nextCard {
-    int i = index;
-    do {
-      i = i + 1;
-      if (i >= cardsLearn.length) {
-        return card;
-      }
-    } while (cardsLearn[i].validated);
-    return cardsLearn[i].card;
-  }
-
-  get hasNextCard {
-    int i = index;
-    do {
-      i = i + 1;
-      if (i >= cardsLearn.length) {
-        return false;
-      }
-    } while (cardsLearn[i].validated);
-    return true;
-  }
-
-  get validated => cardsLearn.where((e) => e.validated).length;
-
-  get total => cardsLearn.length;
-
-  get progress => validated / total;
-
-  get prevProgress => prevRoundScore / total;
-
   void next() {
-    if (validated == total) {
-      roundEnd = true;
-      return;
-    }
     front = true;
     animPos = 0;
-
-    do {
-      index = index + 1;
-      if (index >= cardsLearn.length) {
-        index = 0;
-        cardsLearn.shuffle();
-        roundEnd = true;
-      }
-    } while (cardsLearn[index].validated);
-  }
-
-  void validate() {
-    cardsLearn[index].validated = true;
+    learn.next();
   }
 
   void animNext(bool isCorrect) {
@@ -140,27 +63,27 @@ class _BasicContentState extends State<BasicContent>
     with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-            _buildProgress(context),
-          ] +
-          _buildContent(context),
-    );
-  }
-
-  Widget _buildProgress(BuildContext context) {
-    return TweenAnimationBuilder(
-      tween: Tween<double>(begin: widget.prevProgress, end: widget.progress),
-      duration: const Duration(milliseconds: 250),
-      builder: (BuildContext context, double value, Widget? child) {
-        return LinearProgressIndicator(
-          value: value,
-          minHeight: 10,
-          color: widget.theme.color,
-          backgroundColor: widget.theme.colorAccent,
-        );
-      },
-    );
+    return Column(children: <Widget>[
+      LearnSystemProgress(learn: widget.learn),
+      LearnSystemRound(
+        learn: widget.learn,
+        onEnd: () {
+          Navigator.pop(context);
+        },
+        onNextRound: () {
+          setState(() {
+            widget.learn.prevRoundScore = widget.learn.validated;
+            widget.learn.roundEnd = false;
+          });
+        },
+        child: Column(
+          children: [
+            Expanded(child: _buildCard(context)),
+            _buildButtons(context),
+          ],
+        ),
+      ),
+    ]);
   }
 
   Widget _buildButtons(BuildContext context) {
@@ -171,6 +94,7 @@ class _BasicContentState extends State<BasicContent>
           icon: const Icon(Icons.close),
           color: Colors.red,
           onPressed: () {
+            if (widget.animPos != 0) return;
             setState(() {
               widget.animNext(false);
             });
@@ -179,6 +103,7 @@ class _BasicContentState extends State<BasicContent>
         IconButton(
           icon: const Icon(Icons.flip),
           onPressed: () {
+            if (widget.animPos != 0) return;
             setState(() {
               widget.front = !widget.front;
             });
@@ -188,46 +113,15 @@ class _BasicContentState extends State<BasicContent>
           icon: const Icon(Icons.check),
           color: Colors.green,
           onPressed: () {
+            if (widget.animPos != 0) return;
             setState(() {
-              widget.validate();
+              widget.learn.validate();
               widget.animNext(true);
             });
           },
         ),
       ],
     );
-  }
-
-  List<Widget> _buildContent(BuildContext context) {
-    return widget.roundEnd
-        ? [
-            Expanded(child: _buildRoundEnd(context)),
-          ]
-        : [
-            Expanded(child: _buildCard(context)),
-            _buildButtons(context),
-          ];
-  }
-
-  Widget _buildRoundEnd(BuildContext context) {
-    return widget.validated == widget.total
-        ? End(
-            total: widget.total,
-            onNext: () {
-              Navigator.pop(context);
-            },
-          )
-        : RoundEnd(
-            total: widget.total,
-            prevScore: widget.prevRoundScore,
-            score: widget.validated,
-            onNext: () {
-              setState(() {
-                widget.prevRoundScore = widget.validated;
-                widget.roundEnd = false;
-              });
-            },
-          );
   }
 
   Widget _buildCard(BuildContext context) {
@@ -271,7 +165,7 @@ class _BasicContentState extends State<BasicContent>
         double x = widget.x / MediaQuery.of(context).size.width * 2;
         if (x > 0.3) {
           setState(() {
-            widget.validate();
+            widget.learn.validate();
             widget.animNext(true);
           });
         } else if (x < -0.3) {
@@ -302,12 +196,13 @@ class _BasicContentState extends State<BasicContent>
                   duration:
                       Duration(milliseconds: widget.animPos == 0 ? 0 : 600),
                   curve: Curves.linear,
-                  opacity: widget.hasNextCard
+                  opacity: widget.learn.hasNextCard
                       ? widget.animPos == 0
                           ? 0.1
                           : 1
                       : 0,
-                  child: _buildCardContainer(context, widget.nextCard, true),
+                  child:
+                      _buildCardContainer(context, widget.learn.nextCard, true),
                 ),
               ),
               AnimatedPositioned(
@@ -324,7 +219,7 @@ class _BasicContentState extends State<BasicContent>
                     });
                   }
                 },
-                child: _buildCardContainer(context, widget.card, false),
+                child: _buildCardContainer(context, widget.learn.card, false),
               ),
             ],
           ),
@@ -339,7 +234,7 @@ class _BasicContentState extends State<BasicContent>
       isFront: widget.front || forceFront || widget.animPos != 0,
       front: CardFaceContentParameters(text: card.front),
       back: CardFaceContentParameters(text: card.back),
-      borderColor: widget.theme.color,
+      borderColor: widget.learn.theme.color,
     );
   }
 }
