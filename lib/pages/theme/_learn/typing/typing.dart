@@ -43,6 +43,8 @@ class TypingContent extends StatefulWidget {
 }
 
 class _TypingContentState extends State<TypingContent> {
+  FocusNode _focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -73,13 +75,34 @@ class _TypingContentState extends State<TypingContent> {
         ),
         widget.front
             ? _buildInput()
-            : ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    widget.next();
-                  });
-                },
-                child: const Text("Next"),
+            : Stack(
+                children: [
+                  Visibility(
+                    visible: false,
+                    maintainState: true,
+                    child: TextField(
+                      autofocus: true,
+                      enabled: true,
+                      decoration: const InputDecoration(
+                        hintText: "Type the answer",
+                        border: OutlineInputBorder(),
+                      ),
+                      onSubmitted: (value) {
+                        setState(() {
+                          widget.next();
+                        });
+                      },
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        widget.next();
+                      });
+                    },
+                    child: const Text("Next"),
+                  ),
+                ],
               ),
       ],
     );
@@ -113,6 +136,7 @@ class _TypingContentState extends State<TypingContent> {
           widget.learn.validate();
           widget.next();
         });
+        _focusNode.requestFocus();
       } else {
         setState(() {
           widget.front = false;
@@ -130,6 +154,7 @@ class _TypingContentState extends State<TypingContent> {
             child: TextField(
               controller: controller,
               autofocus: true,
+              focusNode: _focusNode,
               onSubmitted: submit,
               decoration: const InputDecoration(
                 hintText: "Type the answer",
