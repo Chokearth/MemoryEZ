@@ -107,6 +107,7 @@ class _ThemeEditState extends State<ThemeEdit> {
                               child: SizedBox(
                                 width: double.infinity,
                                 child: ListView(
+                                  physics: const BouncingScrollPhysics(),
                                   shrinkWrap: true,
                                   children: _buildThemeForm() + _buildCards(),
                                 ),

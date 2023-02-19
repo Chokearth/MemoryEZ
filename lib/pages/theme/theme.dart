@@ -20,7 +20,7 @@ class LearnOption {
   });
 }
 
-class ThemePage extends StatelessWidget {
+class ThemePage extends StatefulWidget {
   final FlashTheme theme;
   late List<LearnOption> options;
 
@@ -42,16 +42,21 @@ class ThemePage extends StatelessWidget {
   }
 
   @override
+  State<ThemePage> createState() => _ThemePageState();
+}
+
+class _ThemePageState extends State<ThemePage> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(theme.name),
+        title: Text(widget.theme.name),
         actions: [
           _buildActionButton(context),
         ],
       ),
       body: FutureBuilder(
-        future: theme.getFlashcards(),
+        future: widget.theme.getFlashcards(),
         builder:
             (BuildContext context, AsyncSnapshot<List<Flashcard>> snapshot) {
           if (snapshot.hasError) {
@@ -73,15 +78,15 @@ class ThemePage extends StatelessWidget {
   }
 
   Widget _buildActionButton(BuildContext context) {
-    return theme.isMine
+    return widget.theme.isMine
         ? IconButton(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ThemeEdit(theme: theme),
+                  builder: (context) => ThemeEdit(theme: widget.theme),
                 ),
-              );
+              ).then((value) => setState(() {}));
             },
             icon: const Icon(Icons.edit),
           )
@@ -103,7 +108,7 @@ class ThemePage extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          theme.clone();
+                          widget.theme.clone();
                           Navigator.popUntil(
                             context,
                             ModalRoute.withName('/'),
@@ -124,6 +129,7 @@ class ThemePage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -132,7 +138,7 @@ class ThemePage extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             Column(
-              children: options
+              children: widget.options
                   .map((option) => Card(
                         child: ListTile(
                           leading: Column(

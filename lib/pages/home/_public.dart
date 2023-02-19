@@ -27,6 +27,7 @@ class _PublicState extends State<Public> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return ListView.separated(
+            physics: const BouncingScrollPhysics(),
             itemCount: snapshot.data!.length,
             itemBuilder: (BuildContext context, int index) {
               return SizedBox(
