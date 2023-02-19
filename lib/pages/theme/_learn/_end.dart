@@ -1,8 +1,6 @@
-import 'dart:math';
-
+import 'package:confetti/confetti.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:confetti/confetti.dart';
 
 class End extends StatefulWidget {
   final int total;
@@ -18,7 +16,6 @@ class End extends StatefulWidget {
 class _EndState extends State<End> {
   late ConfettiController _confettiController;
 
-
   @override
   void initState() {
     super.initState();
@@ -26,7 +23,6 @@ class _EndState extends State<End> {
         ConfettiController(duration: const Duration(seconds: 10));
     _confettiController.play();
   }
-
 
   @override
   void dispose() {
