@@ -92,6 +92,7 @@ class _BasicContentState extends State<BasicContent>
       children: [
         IconButton(
           icon: const Icon(Icons.close),
+          iconSize: 40,
           color: Colors.red,
           onPressed: () {
             if (widget.animPos != 0) return;
@@ -102,6 +103,7 @@ class _BasicContentState extends State<BasicContent>
         ),
         IconButton(
           icon: const Icon(Icons.flip),
+          iconSize: 40,
           onPressed: () {
             if (widget.animPos != 0) return;
             setState(() {
@@ -111,6 +113,7 @@ class _BasicContentState extends State<BasicContent>
         ),
         IconButton(
           icon: const Icon(Icons.check),
+          iconSize: 40,
           color: Colors.green,
           onPressed: () {
             if (widget.animPos != 0) return;
