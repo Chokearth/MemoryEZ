@@ -23,7 +23,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -61,16 +64,5 @@ class DefaultFirebaseOptions {
     messagingSenderId: '507321546238',
     projectId: 'memory-ez',
     storageBucket: 'memory-ez.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyB5SLbEKwFH-5OYUq76v_d2e84qT3tE_IE',
-    appId: '1:507321546238:ios:6d33a539f894346fd87caf',
-    messagingSenderId: '507321546238',
-    projectId: 'memory-ez',
-    storageBucket: 'memory-ez.appspot.com',
-    androidClientId: '507321546238-fkjg0cj752orqj89593rmcjig2bltaa2.apps.googleusercontent.com',
-    iosClientId: '507321546238-ef9hm7jmmdn6hcpb71kit0mao5djrs9u.apps.googleusercontent.com',
-    iosBundleId: 'fr.chokearth.memoryEz',
   );
 }
