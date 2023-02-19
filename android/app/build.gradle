@@ -62,19 +62,34 @@ android {
         versionName flutterVersionName
     }
 
-   signingConfigs {
-       release {
-           keyAlias keystoreProperties['keyAlias']
-           keyPassword keystoreProperties['keyPassword']
-           storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-           storePassword keystoreProperties['storePassword']
-       }
-   }
-   buildTypes {
-       release {
-           signingConfig signingConfigs.release
-       }
-   }
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+
+    flavorDimensions "default"
+    productFlavors {
+        production {
+            dimension "default"
+            resValue "string", "app_name", "Memory EZ"
+            applicationIdSuffix ""
+        }
+        development {
+            dimension "default"
+            resValue "string", "app_name", "Dev Memory EZ"
+            applicationIdSuffix ".dev"
+        }
+    }
+
 }
 
 flutter {

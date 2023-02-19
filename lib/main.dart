@@ -6,13 +6,9 @@ import 'package:memory_ez/envConfig.dart';
 import 'package:memory_ez/routes.dart';
 import 'package:memory_ez/theme.dart';
 
-import 'firebase_options.dart';
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp();
 
   var firestore = FirebaseFirestore.instance;
   if (EnvConfig.isDev) {
