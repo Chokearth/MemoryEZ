@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memory_ez/services/auth.dart';
 
 import '../../models/theme.dart';
 import '../../services/theme.dart';
@@ -29,13 +30,30 @@ class _HomeState extends State<Home> {
               const Spacer(),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ThemeEdit(
-                          theme: FlashTheme(name: 'New', color: Colors.purple)),
-                    ),
-                  ).then((value) => setState(() {}));
+                  emailIsVerified().then((value) {
+                    if (!value) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Please verify your email first'),
+                          action: SnackBarAction(
+                            label: 'Resend',
+                            onPressed: () {
+                              sendEmailVerification();
+                            },
+                          ),
+                        ),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ThemeEdit(
+                              theme: FlashTheme(
+                                  name: 'New', color: Colors.purple)),
+                        ),
+                      ).then((value) => setState(() {}));
+                    }
+                  });
                 },
                 child: const Text('New theme'),
               ),

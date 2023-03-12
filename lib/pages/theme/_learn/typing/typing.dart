@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:memory_ez/widgets/app_container.dart';
 import 'package:memory_ez/widgets/card/card_face.dart';
 import 'package:memory_ez/widgets/card/flippable_card.dart';
 
@@ -13,9 +14,10 @@ class Typing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppContainer(
       appBar: AppBar(
         title: Text(theme.name),
+        backgroundColor: Colors.transparent,
       ),
       body: LoadCards(
         theme: theme,

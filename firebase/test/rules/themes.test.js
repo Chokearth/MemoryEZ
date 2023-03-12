@@ -52,8 +52,8 @@ describe('Database rules', () => {
     beforeAll(async () => {
         const randomId = Math.random().toString(36).substring(2);
         itEnv = await setup(mockData, randomId);
-        db1 = itEnv.fuser('user1');
-        db2 = itEnv.fuser('user2');
+        db1 = itEnv.fuser('user1', {email_verified: true});
+        db2 = itEnv.fuser('user2', {email_verified: true});
     });
 
     afterAll(async () => {
@@ -153,6 +153,36 @@ describe('Database rules', () => {
                 cardCount: 0,
                 public: true,
                 ownerId: 'user1',
+            }));
+        });
+        it('can\'t create theme if email not verified', async () => {
+            const db = itEnv.fuser('user3', {
+                email_verified: false,
+            });
+            const ref = db.collection('themes').doc('theme6');
+            await assertFails(ref.set({
+                name: 'theme6',
+                colors: [
+                    255, 255, 255
+                ],
+                cardCount: 0,
+                public: true,
+                ownerId: 'user3',
+            }));
+        });
+        it('can create theme if email verified', async () => {
+            const db = itEnv.fuser('user4', {
+                email_verified: true,
+            });
+            const ref = db.collection('themes').doc('theme6');
+            await assertSucceeds(ref.set({
+                name: 'theme7',
+                colors: [
+                    255, 255, 255
+                ],
+                cardCount: 0,
+                public: true,
+                ownerId: 'user4',
             }));
         });
     });

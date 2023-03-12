@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:memory_ez/pages/home/_home.dart';
 import 'package:memory_ez/pages/home/_public.dart';
+import 'package:memory_ez/widgets/app_container.dart';
 
 import '../../services/auth.dart';
 import '_profile.dart';
@@ -53,7 +54,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppContainer(
       appBar: AppBar(
         title: const Text('MemoryEZ'),
         actions: [
@@ -64,11 +65,13 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ],
+        backgroundColor: Colors.transparent,
       ),
       body: Center(
         child: _navigationItems[_selectedIndex].widget,
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.transparent,
         items: _navigationItems
             .map((NavigationItem navigationItem) => BottomNavigationBarItem(
                   icon: Icon(navigationItem.icon),

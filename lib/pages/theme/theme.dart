@@ -3,6 +3,8 @@ import 'package:memory_ez/models/theme.dart';
 import 'package:memory_ez/pages/theme/_learn/basic/basic.dart';
 import 'package:memory_ez/pages/theme/_learn/typing/typing.dart';
 import 'package:memory_ez/pages/theme_edit/theme_edit.dart';
+import 'package:memory_ez/services/auth.dart';
+import 'package:memory_ez/widgets/app_container.dart';
 
 import '_card.dart';
 
@@ -48,12 +50,13 @@ class ThemePage extends StatefulWidget {
 class _ThemePageState extends State<ThemePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppContainer(
       appBar: AppBar(
         title: Text(widget.theme.name),
         actions: [
           _buildActionButton(context),
         ],
+        backgroundColor: Colors.transparent,
       ),
       body: FutureBuilder(
         future: widget.theme.getFlashcards(),
@@ -92,34 +95,50 @@ class _ThemePageState extends State<ThemePage> {
           )
         : IconButton(
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text("Clone theme"),
-                    content: const Text(
-                        "Are you sure you want to clone this theme ?"),
-                    actions: [
-                      TextButton(
+              emailIsVerified().then((value) {
+                if (!value) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('Please verify your email first'),
+                      action: SnackBarAction(
+                        label: 'Resend',
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          sendEmailVerification();
                         },
-                        child: const Text("Cancel"),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          widget.theme.clone();
-                          Navigator.popUntil(
-                            context,
-                            ModalRoute.withName('/'),
-                          );
-                        },
-                        child: const Text("Clone"),
-                      ),
-                    ],
+                    ),
                   );
-                },
-              );
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Clone theme"),
+                        content: const Text(
+                            "Are you sure you want to clone this theme ?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("Cancel"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              widget.theme.clone();
+                              Navigator.popUntil(
+                                context,
+                                ModalRoute.withName('/'),
+                              );
+                            },
+                            child: const Text("Clone"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              });
             },
             icon: const Icon(Icons.copy),
           );

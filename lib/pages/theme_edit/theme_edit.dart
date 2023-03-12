@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:memory_ez/models/theme.dart';
+import 'package:memory_ez/widgets/app_container.dart';
 import 'package:memory_ez/widgets/form/checkbox.dart';
 
 import '../../widgets/form/color_picker.dart';
@@ -84,9 +85,10 @@ class _ThemeEditState extends State<ThemeEdit> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppContainer(
         appBar: AppBar(
           title: const Text('Theme Edit'),
+          backgroundColor: Colors.transparent,
         ),
         body: FutureBuilder(
             future: widget.cardsFuture,

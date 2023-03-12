@@ -5,8 +5,10 @@ class CheckboxFormField extends FormField<bool> {
     Key? key,
     required String label,
     required bool initialValue,
+    bool leading = false,
     required FormFieldSetter<bool> onSaved,
     FormFieldValidator<bool>? validator,
+    Color color = Colors.green,
   }) : super(
           key: key,
           initialValue: initialValue,
@@ -19,6 +21,10 @@ class CheckboxFormField extends FormField<bool> {
                 state.didChange(value);
               },
               title: Text(label),
+              controlAffinity: leading
+                  ? ListTileControlAffinity.leading
+                  : ListTileControlAffinity.trailing,
+              activeColor: color,
             );
           },
         );
