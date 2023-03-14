@@ -19,13 +19,12 @@ Welcome to MemoryEz, a Flutter-based Android application that allows users to cr
 
 ## Screenshots
 
+<div>
 <img height="300" src=".github/images/Screenshot_sign_in.png" alt="SignIn screen" />
-
 <img height="300" src=".github/images/Screenshot_home.png" alt="Home screen" />
-
 <img height="300" src=".github/images/Screenshot_learn.png" alt="Learn screen" />
-
 <img height="300" src=".github/images/Screenshot_edit.png" alt="Edit screen" />
+</div>
 
 ## License
 
